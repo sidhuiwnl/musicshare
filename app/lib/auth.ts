@@ -7,8 +7,8 @@ export const  { handlers, signIn, signOut, auth } = NextAuth({
     adapter : PrismaAdapter(prisma),
     providers : [Spotify],
     callbacks  : {
-        async redirect(){
-            return "/"
+        async redirect({ url ,baseUrl }){
+            return "/playList"
         }
     }
     

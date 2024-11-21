@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
-import localFont from "next/font/local";
+import { ThemeProvider } from "@/components/theme-provider";
 import "./globals.css";
 import  { Roboto_Mono } from "next/font/google"
-
+import { SidebarProvider } from "@/components/ui/sidebar";
+import { AppSidebar } from "@/components/sidebar";
 
 const robot = Roboto_Mono({
   subsets: ["latin"],
@@ -21,11 +22,23 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
+
       <body
         className={`${robot.className}  antialiased`}
       >
-        {children}
+        <SidebarProvider>
+          <AppSidebar/>
+          <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+          >
+            
+                {children}
+          </ThemeProvider>
+        </SidebarProvider>
       </body>
     </html>
   );
