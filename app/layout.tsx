@@ -1,15 +1,19 @@
 import type { Metadata } from "next";
 import { ThemeProvider } from "@/components/theme-provider";
 import "./globals.css";
-import  { Roboto_Mono } from "next/font/google"
-import { SidebarProvider } from "@/components/ui/sidebar";
-import { AppSidebar } from "@/components/sidebar";
+import localFont from "next/font/local";
 
-const robot = Roboto_Mono({
-  subsets: ["latin"],
-  display: "swap",
+const geistSans = localFont({
+  src: "./fonts/GeistVF.woff",
+  variable: "--font-geist-sans",
+  weight: "100 900",
+});
 
-})
+const geistMono = localFont({
+  src: "./fonts/GeistMonoVF.woff",
+  variable: "--font-geist-mono",
+  weight: "100 900",
+});
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -23,22 +27,17 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-
       <body
-        className={`${robot.className}  antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable}  antialiased`}
       >
-        <SidebarProvider>
-          <AppSidebar/>
-          <ThemeProvider
+        <ThemeProvider
           attribute="class"
           defaultTheme="system"
           enableSystem
           disableTransitionOnChange
-          >
-            
-                {children}
-          </ThemeProvider>
-        </SidebarProvider>
+        >
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );
