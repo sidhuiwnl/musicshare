@@ -2,8 +2,6 @@ import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/sidebar";
 import localFont from "next/font/local";
 
-
-
 const geistSans = localFont({
   src: "../fonts/GeistVF.woff",
   variable: "--font-geist-sans",
@@ -25,9 +23,9 @@ export default async function PlayListCollection({
     <SidebarProvider>
       <AppSidebar />
       <div
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-white text-black font-[family-name:var(--font-geist-sans)] w-screen h-screen`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-white text-black font-[family-name:var(--font-geist-sans)] w-screen h-screen overflow-auto `}
       >
-        {children}
+        <main>{children}</main>
       </div>
     </SidebarProvider>
   );

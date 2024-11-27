@@ -10,7 +10,7 @@ export default {
   theme: {
   	extend: {
   		colors: {
-			bento : '#697565',
+			bento : '#AB886D',
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',
   			card: {

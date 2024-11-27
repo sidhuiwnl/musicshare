@@ -1,48 +1,87 @@
 "use server";
 
-export async function getToken() {
-  try {
-    const response = await fetch("https://accounts.spotify.com/api/token", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-      body: new URLSearchParams({
-        grant_type: "client_credentials",
-        client_id: "f86edfbb300e4419b2062fecfe76d8da",
+import { auth } from "@/app/lib/auth";
+import { prisma } from "@/app/lib/prisma";
 
-        client_secret: "fb5c2ba0a2af46178a1d0ceb87060a3d",
-      }).toString(),
+export async function getPlayList() {
+  const session = await auth();
+
+  if (!session?.user) {
+    throw new Error("Unauthorized");
+  }
+
+  try {
+    let spotifyId = await prisma.account.findFirst({
+      where: {
+        userId: session.user.id,
+      },
     });
 
+    const token = spotifyId?.access_token;
+
+    const response = await fetch(
+      `https://api.spotify.com/v1/users/${spotifyId?.providerAccountId}/playlists`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+
+        method: "GET",
+      }
+    );
+
     if (!response.ok) {
-      throw new Error("Failed to fetch the token");
+      throw new Error(`Unable to fetch playlist`);
     }
+
     const data = await response.json();
 
-    return data;
+    return {
+      data,
+      token,
+    };
   } catch (error) {
-    console.error("Internal Server Error");
+    console.error("Internal server error");
   }
 }
 
+export async function getPlayListTracks( playListId : string){
+  const session = await auth();
 
-export async function getUser(){
-    const { access_token } = await getToken();
+  if (!session?.user) {
+    throw new Error("Unauthorized");
+  }
 
-    try {
-        const response = await fetch("https://api.spotify.com/v1/me",{
-            headers : {
-                Authorization: 'Bearer ' + access_token
-            }
-        })
+  try {
+    let spotifyId = await prisma.account.findFirst({
+      where: {
+        userId: session.user.id,
+      },
+    });
 
-        const data = await response.json();
-        console.log(data)
-    } catch (error) {
-        console.error("Internal Server Error");
+    const token = spotifyId?.access_token;
+
+   const response =  await fetch(`https://api.spotify.com/v1/playlists/${playListId}/tracks`,{
+      headers : {
+        "Content-Type" : "application/json",
+        "Authorization" : `Bearer ${token}`
+      },
+      method : "GET"
+    })
+
+    if(!response.ok){
+      throw new Error("Unable to fetch playlist tracks ")
     }
-   
+    const data = await response.json();
+
+
+    
+    return {
+      data : data
+    }
+  } catch (error) {
+    console.error("Internal server error");
+  }
 }
 
-getUser()
